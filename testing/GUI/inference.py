@@ -7,7 +7,7 @@ from sentence_transformers import SentenceTransformer
 
 # --- Config ---
 API_URL      = "http://localhost:11434/api/generate"
-COLLECTION   = "thws_data2_chunks"
+COLLECTION   = "thws_data3_chunks"
 QDRANT_URL   = "http://localhost:6333"
 EMBED_MODEL  = "BAAI/bge-m3"
 TOP_K        = 3
@@ -45,9 +45,9 @@ def get_context(question: str, top_k: int = TOP_K) -> str:
 
 def query_model(question: str, context: str, model_name: str = "gemma3:27b") -> str:
     prompt = f"""
-Du bist ein hochintelligenter und präziser Assistent der Hochschule THWS.
+Du bist ein hochintelligenter und präziser Assistent der Hochschule THWS der ausschließlich Fragen beantwortet.
 Nutze ausschließlich die unten stehenden Kontextinformationen, um die Frage zu beantworten.
-Wenn der Kontext nicht ausreicht, antworte mit "Diese Frage kann ich leider nicht beantworten."
+Wenn der Kontext nicht ausreicht, antworte mit Dann beziehe dich leicht auf die Frage und erkläre, dass du die Frage nicht beantworten kannst.
 
 Kontext:
 {context}
