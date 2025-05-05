@@ -19,9 +19,26 @@ EMBED_MODEL_NAME = "BAAI/bge-m3"
 EMBED_DIM = 1024
 QDRANT_URL = "http://localhost:6333"
 
-# --- Load Chunks ---
-with open(CHUNKS_PATH, "r", encoding="utf-8") as f:
-    chunks = json.load(f)
+# --- Load Chunks (support both .json and .jsonl) ---
+with open(CHUNKS_PATH, "r", encoding="utf-8-sig") as f:
+    if CHUNKS_PATH.lower().endswith('.jsonl'):
+        chunks = []
+        for idx, line in enumerate(f, start=1):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                chunks.append(json.loads(line))
+            except json.JSONDecodeError as e:
+                print(f"❌ JSON Decode Error in line {idx}: {e}")
+                print(f"Line content: {line!r}")
+                sys.exit(1)
+    else:
+        try:
+            chunks = json.load(f)
+        except json.JSONDecodeError as e:
+            print(f"❌ JSON Decode Error: {e}")
+            sys.exit(1)
 
 # --- Load Embedding Model with CUDA ---
 if torch.cuda.is_available():

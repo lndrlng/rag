@@ -22,13 +22,25 @@ def main():
 
     output_path = input_path.replace(".json", "_chunks.json")
 
-    # Load raw documents
+    # Load raw documents (support both .json and .jsonl)
     with open(input_path, "r", encoding="utf-8") as f:
-        try:
-            raw_docs = json.load(f)
-        except json.JSONDecodeError as e:
-            print(f"❌ JSON Decode Error: {e}")
-            sys.exit(1)
+        if input_path.lower().endswith('.jsonl'):
+            raw_docs = []
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    raw_docs.append(json.loads(line))
+                except json.JSONDecodeError as e:
+                    print(f"❌ JSON Decode Error in line: {e}")
+                    sys.exit(1)
+        else:
+            try:
+                raw_docs = json.load(f)
+            except json.JSONDecodeError as e:
+                print(f"❌ JSON Decode Error: {e}")
+                sys.exit(1)
 
     print(f"🔍 Loaded {len(raw_docs)} documents")
 
